@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.3/axios.min.js"></script>
+    
+</head>
+<body>
+        <!--다국어 번역 기능-->
+        <div class="gtranslate_wrapper">
+            <script>window.gtranslateSettings = {"default_language":"ko","detect_browser_language":true,"languages":["es","de","th","mn","ar","ko","en","ja","zh-CN"],"wrapper_selector":".gtranslate_wrapper","flag_size":24,"horizontal_position":"right","vertical_position":"top"}</script>
+            <script src="https://cdn.gtranslate.net/widgets/latest/flags.js" defer></script>
+        </div>
+        
+    <div id="app">
+        <button @click="fetchData">도서관 자료 읽기</button>
+        <button @click="clearData">자료 지우기</button>
+    
+        <div v-for="(lib, index) in libraries" :key="index">
+            <!--json데이터의 칼럼명들-->
+            <h3>{{lib.LBRRY_NAME}}</h3>
+            주소 : {{lib.ADRES}}<br>
+            전화 : {{lib.TEL_NO}}<hr>
+        </div>
+    </div>
+<script>
+    const {createApp} = Vue;
+
+    createApp({
+        data(){
+            return{
+                libraries:[]
+            }
+        },
+        methods: {
+            fetchData(){
+    //axios로 json 데이터 출력하기 
+                axios.get('https://raw.githubusercontent.com/pykwon/python/master/seoullibtime5.json') //서버에서 동일출처정책을 해제해줘야 사용가능
+                .then(response => { //첫 통신 데이터 수신
+                    this.libraries = response.data.SeoulLibraryTime.row;
+                    })
+                .catch(error => {
+                    console.log('읽기 오류 : ', error);
+                });
+            },
+            clearData(){
+                this.libraries = [];
+            }
+        },
+    }).mount('#app')
+</script>
+</body>
+</html>

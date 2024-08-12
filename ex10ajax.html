@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3"></script>
+</head>
+<body>
+    <!--다국어 번역 기능-->
+    <div class="gtranslate_wrapper">
+        <script>window.gtranslateSettings = {"default_language":"ko","detect_browser_language":true,"languages":["es","de","th","mn","ar","ko","en","ja","zh-CN"],"wrapper_selector":".gtranslate_wrapper","flag_size":24,"horizontal_position":"right","vertical_position":"top"}</script>
+        <script src="https://cdn.gtranslate.net/widgets/latest/flags.js" defer></script>
+    </div>
+    
+    <div id="app">
+        <button @click="fetchData">Ajax로 json자료 읽기</button>
+        <button @click="clearData">json 자료 지우기</button>
+    
+        <div v-for="(post, index) in posts" :key="index">
+            <h3>제목 : {{post.title}}</h3>
+            <br>아이디 : {{post.id}}</br>
+            <br>내용 : {{post.body}}</br>
+            <hr/>
+        </div>
+    </div>
+<script>
+    const {createApp} = Vue;
+
+    createApp({
+        data(){
+            return{
+                posts:[]
+            }
+        },
+        methods: {
+            fetchData(){
+                fetch('https://jsonplaceholder.typicode.com/posts') //서버에서 동일출처정책을 해제해줘야 사용가능
+                .then(response => { //첫 통신 데이터 수신
+                    if(!response.ok){ //수신 실패시 에러 출력
+                        throw new Error('Ajax 에러');
+                    }
+                    return response.json(); //json 데이터로 변환하여 반환
+                })
+                .then(json => { //가져온 json 데이터를 10개까지만 자름
+                    this.posts = json.slice(0, 10);
+                })
+                .catch(error => {
+                    console.log('읽기 오류 : ', error);
+                });
+            },
+            clearData(){
+                this.posts = [];
+            }
+        },
+    }).mount('#app')
+</script>
+</body>
+</html>
